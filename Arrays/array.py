@@ -84,3 +84,59 @@ would mean that when we are referring to it in the ArrayIterator, we can't get t
 of the array as this would be pointing towards the attribute which doesn't have the length()
 value indicated.
 '''
+
+class Array2D:
+
+    # 2D Constructor Array
+    def __init__(self, nrows, ncols):
+        if nrows > 0 and ncols > 0:
+
+            # Create the Rows
+            self.Rows = Array(nrows)
+
+            # Iterate through the values
+            for i in range(len(self.Rows)):
+                self.Rows.setItem(i, Array(ncols))
+            self.clear(None)
+            self.nrows = nrows
+            self.ncols = ncols
+        else:
+            raise e.ArrayConstructionError('Columns or Rows are not greater than 0, or they are not integers')
+
+    # Return number of rows
+    def numRows(self):
+        return self.nrows
+
+    # Return number of cols
+    def numCols(self):
+        return self.ncols
+
+    # Clearing value
+    def clear(self, value):
+        
+        # Iterate through the columns and give the values
+        for i in range(len(self.Rows)):
+            self.Rows.getItem(i).clear(None)
+
+    # Getting item
+    def getItem(self, positionTuple):
+
+        queryRow = positionTuple[0]
+        queryCol = positionTuple[1]
+        return self.Rows.getItem(queryRow).getItem(queryCol)
+
+    # Setting Item
+    def setItem(self, positionTuple, value):
+        queryRow = positionTuple[0]
+        queryCol = positionTuple[1]
+        return self.Rows.getItem(queryRow).setItem(queryCol, value)
+
+'''
+Extra Note: For consistency usage, we will be employing the Array
+data structure that we have employed previously. Furthermore,
+for further consistency, we ensure that we call the indexes
+to retrieve or modify via a tuple format. To represent a[r,c] where
+r=rows and c=columns. Conventionally, with a 2D list, a simple a[r][c]
+would suffice
+'''       
+
