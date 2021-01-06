@@ -143,5 +143,106 @@ for further consistency, we ensure that we call the indexes
 to retrieve or modify via a tuple format. To represent a[r,c] where
 r=rows and c=columns. Conventionally, with a 2D list, a simple a[r][c]
 would suffice
-'''       
+'''
 
+class Matrix:
+
+    # Constructing a Matrix
+    def __init__(self, nrows, ncols):
+        if nrows > 0 and ncols > 0:
+
+            # Create the Rows
+            self.matrix = Array2D(nrows, ncols)
+            self.matrix.clear(0)
+            self.nrows = nrows
+            self.ncols = ncols
+        else:
+            raise e.ArrayConstructionError('Columns or Rows are not greater than 0, or they are not integers')
+
+    # Return number of rows
+    def numRows(self):
+        return self.nrows
+
+    # Return number of cols
+    def numCols(self):
+        return self.ncols
+
+    # Getting item
+    def getItem(self, positionTuple):
+        return self.matrix.getItem(positionTuple)
+
+    # Setting Item
+    def setItem(self, positionTuple, value):
+        self.matrix.setItem(positionTuple, value)
+
+    # Scaling By
+    def scale(self, scalar):
+
+        # Iterate through each element and times the scalar value to it
+        for i in range(len(self.matrix)):
+            column = self.matrix.getItem(i)
+            for j in range(len(column)):
+                val = self.getItem((i,j))
+                self.matrix.setItem((i,j), val*scalar)
+
+        return self.matrix
+
+    # Transpose
+    def transpose(self):
+
+        # Generate a new array to place the number to it
+        self.transposeArray = Array2D(self.numCols(), self.numRows())
+        self.transposeArray.clear(0)
+
+        # Iterate through original array
+        for i in range(self.numRows()):
+            for j in range(self.numCols()):
+                val = self.getItem((i,j))
+                self.transposeArray.setItem((j,i), val)
+
+        return self.transposeArray
+
+    # Addition
+    def add(self, rhsmatrix):
+        if self.numCols() == rhsmatrix.numCols() and self.numRows() == rhsmatrix.numRows():
+            for i in range(self.numRows()):
+                for j in range(self.numCols()):
+                    current_val = self.getItem((i,j))
+                    incoming_val = rhsmatrix.getItem((i,j))
+                    self.matrix.setItem((i,j), current_val + incoming_val)
+            return self.matrix
+        else:
+            raise e.MatrixOperationError('The columns or rows of the given matrix is not the same')
+
+    # Subtraction
+    def subtract(self, rhsmatrix):
+        if self.numCols() == rhsmatrix.numCols() and self.numRows() == rhsmatrix.numRows():
+            for i in range(self.numRows()):
+                for j in range(self.numCols()):
+                    current_val = self.getItem((i,j))
+                    incoming_val = rhsmatrix.getItem((i,j))
+                    self.matrix.setItem((i,j), current_val - incoming_val)
+            return self.matrix
+        else:
+            raise e.MatrixOperationError('The columns or rows of the given matrix is not the same')
+
+    # Multiplication
+    def multiply(self, rhsmatrix):
+
+        # Generate a new array to place the number to it
+        self.multiplyArray = Array2D(self.numCols(), self.numRows())
+        self.multiplyArray.clear(0)
+
+        if self.numCols() == rhsmatrix.numRows():
+            for i in range(self.numRows()):
+                tmp = 0
+                for j in range(rhsmatrix.numCols()):
+                    for k in range(self.numCols()):
+                        current_val = self.getItem((i, k))
+                        incoming_val = rhsmatrix.getItem((k,j))
+                        tmp += current_val + incoming_val
+                self.multiplyArray.setItem((i, j), tmp)
+            return self.multiplyArray        
+
+        else:
+            raise e.MatrixOperationError('The columns or rows of the given matrix is not the same')
