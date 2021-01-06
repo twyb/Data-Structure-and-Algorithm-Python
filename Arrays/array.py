@@ -120,16 +120,21 @@ class Array2D:
 
     # Getting item
     def getItem(self, positionTuple):
-
         queryRow = positionTuple[0]
         queryCol = positionTuple[1]
-        return self.Rows.getItem(queryRow).getItem(queryCol)
+        if 0 <= queryRow < self.numRows() and 0 <= queryCol < self.numCols():
+            return self.Rows.getItem(queryRow).getItem(queryCol)
+        else:
+            raise IndexError('Rows and Columns are not within the range or not an integer')
 
     # Setting Item
     def setItem(self, positionTuple, value):
         queryRow = positionTuple[0]
         queryCol = positionTuple[1]
-        return self.Rows.getItem(queryRow).setItem(queryCol, value)
+        if 0 <= queryRow < self.numRows() and 0 <= queryCol < self.numCols():
+            self.Rows.getItem(queryRow).setItem(queryCol, value)
+        else:
+            raise IndexError('Rows and Columns are not within the range or not an integer')
 
 '''
 Extra Note: For consistency usage, we will be employing the Array
