@@ -179,9 +179,8 @@ class Matrix:
     def scale(self, scalar):
 
         # Iterate through each element and times the scalar value to it
-        for i in range(len(self.matrix)):
-            column = self.matrix.getItem(i)
-            for j in range(len(column)):
+        for i in range(self.numRows()):
+            for j in range(self.numCols()):
                 val = self.getItem((i,j))
                 self.matrix.setItem((i,j), val*scalar)
 
@@ -191,38 +190,40 @@ class Matrix:
     def transpose(self):
 
         # Generate a new array to place the number to it
-        self.transposeArray = Array2D(self.numCols(), self.numRows())
-        self.transposeArray.clear(0)
+        transposeArray = Array2D(self.numCols(), self.numRows())
+        transposeArray.clear(0)
 
         # Iterate through original array
         for i in range(self.numRows()):
             for j in range(self.numCols()):
                 val = self.getItem((i,j))
-                self.transposeArray.setItem((j,i), val)
+                transposeArray.setItem((j,i), val)
 
-        return self.transposeArray
+        return transposeArray
 
     # Addition
     def add(self, rhsmatrix):
         if self.numCols() == rhsmatrix.numCols() and self.numRows() == rhsmatrix.numRows():
+            newMatrix = Matrix(self.numRows(), self.numCols())
             for i in range(self.numRows()):
                 for j in range(self.numCols()):
                     current_val = self.getItem((i,j))
                     incoming_val = rhsmatrix.getItem((i,j))
-                    self.matrix.setItem((i,j), current_val + incoming_val)
-            return self.matrix
+                    newMatrix.setItem((i,j), current_val + incoming_val)
+            return newMatrix
         else:
             raise e.MatrixOperationError('The columns or rows of the given matrix is not the same')
 
     # Subtraction
     def subtract(self, rhsmatrix):
         if self.numCols() == rhsmatrix.numCols() and self.numRows() == rhsmatrix.numRows():
+            newMatrix = Matrix(self.numRows(), self.numCols())
             for i in range(self.numRows()):
                 for j in range(self.numCols()):
                     current_val = self.getItem((i,j))
                     incoming_val = rhsmatrix.getItem((i,j))
-                    self.matrix.setItem((i,j), current_val - incoming_val)
-            return self.matrix
+                    newMatrix.setItem((i,j), current_val - incoming_val)
+            return newMatrix
         else:
             raise e.MatrixOperationError('The columns or rows of the given matrix is not the same')
 
@@ -230,19 +231,19 @@ class Matrix:
     def multiply(self, rhsmatrix):
 
         # Generate a new array to place the number to it
-        self.multiplyArray = Array2D(self.numCols(), self.numRows())
-        self.multiplyArray.clear(0)
+        multiplyArray = Array2D(self.numRows(), rhsmatrix.numCols())
+        multiplyArray.clear(0)
 
         if self.numCols() == rhsmatrix.numRows():
             for i in range(self.numRows()):
-                tmp = 0
                 for j in range(rhsmatrix.numCols()):
+                    tmp = 0
                     for k in range(self.numCols()):
                         current_val = self.getItem((i, k))
                         incoming_val = rhsmatrix.getItem((k,j))
-                        tmp += current_val + incoming_val
-                self.multiplyArray.setItem((i, j), tmp)
-            return self.multiplyArray        
+                        tmp += current_val * incoming_val
+                    multiplyArray.setItem((i, j), tmp)
+            return multiplyArray        
 
         else:
             raise e.MatrixOperationError('The columns or rows of the given matrix is not the same')
