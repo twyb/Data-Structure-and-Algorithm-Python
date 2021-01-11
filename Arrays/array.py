@@ -53,7 +53,7 @@ class Array:
             self.array[i] = value
 
     # Iterate through array
-    def iterate(self):
+    def __iter__(self):
         return _ArrayIterator(self.array)
 
 # Create an iterator function (With Reference to Data Structures and Algorithm Using Python)
@@ -69,21 +69,13 @@ class _ArrayIterator:
         return self
 
     # Show next value
-    def next(self):
+    def __next__(self):
         if self.curIndex < len(self.arrayRef):
             entry = self.arrayRef[self.curIndex]
             self.curIndex += 1
             return entry
         else:
             raise StopIteration
-
-
-'''
-Extra Note: We can't use length() to get the length for the Array class because this
-would mean that when we are referring to it in the ArrayIterator, we can't get the length
-of the array as this would be pointing towards the attribute which doesn't have the length()
-value indicated.
-'''
 
 class Array2D:
 
