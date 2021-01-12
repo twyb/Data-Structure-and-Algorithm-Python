@@ -3,7 +3,7 @@
 class ArrayConstructionError(Exception):
     pass
 
-# Out of Range
+# Out of Range and Access Issue
 class IndexError(Exception):
     pass
 

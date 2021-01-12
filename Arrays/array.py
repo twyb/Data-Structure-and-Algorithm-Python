@@ -247,3 +247,82 @@ class Matrix:
 
         else:
             raise e.MatrixOperationError('The columns or rows of the given matrix is not the same')
+
+
+class MultiArray:
+
+    # Constructing the multi array
+    def __init__(self, *args):
+
+        multiArrayLength = 1
+
+        if len(args) < 2:
+            raise e.ArrayConstructionError('Must have two or more dimensions')
+
+        for val in args:
+            if val < 1:
+                raise e.ArrayConstructionError('Must have more than 1 features in each array')
+            multiArrayLength *= val
+        self.mArray = Array(multiArrayLength)
+        self._dims = args
+        self.getFactors(self._dims)
+
+    # Get the dimensions
+    def dims(self):
+        return len(self._dims)
+
+    # Get the length in dimension
+    def length(self, dim):
+        try:
+            return self._dims[dim - 1]
+        except:
+            raise e.IndexError('Out of range for dimensions')
+
+    # Clear value
+    def clear(self, value):
+        self.mArray.clear(value)
+
+    # Get Item
+    def __getitem__(self, positionTuple):
+        index = self.getIndex(positionTuple)
+        if index is None:
+            raise e.IndexError('Index out of range')
+        return self.mArray[index]
+
+    # Set Item
+    def __setitem__(self, positionTuple, value):
+        index = self.getIndex(positionTuple)
+        if index is None:
+            raise e.IndexError('Index out of range')
+        self.mArray[index] = value
+
+
+    # Index:
+    def getIndex(self, positionTuple):
+        index = 0
+        if len(positionTuple) != len(self._dims):
+            raise e.IndexError('Position tuple is different dimension compared to the dimensions of multi array')
+        for i in range(len(positionTuple)):
+            if positionTuple[i] < 0 or positionTuple[i] >= self._dims[i]:
+                return None
+            else:
+                index += positionTuple[i] * self.factors[i]
+        return index
+                
+    # Get Factors
+    def getFactors(self, dims):
+        self.factors = []
+        for i in range(len(dims)):
+            tmp = 1
+            for j in range(i+1, len(dims)):
+                tmp *= dims[j]
+            self.factors.append(tmp)
+        
+'''
+Extra Notes: For MultiArray, the key idea is to decompose the
+multi-dimensional array into a 1D array. This can be done via
+getting each row of values or each column of values and combining
+it into the 1D array. To access the data, we get the index for the
+1D array through the use of a formula, i1 * f1 + .. i(n) * 1,
+where f(j) = Product(d[j+1] ... d[n]) and f(n) = 1.
+'''
