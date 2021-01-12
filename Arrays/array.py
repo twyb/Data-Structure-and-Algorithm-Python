@@ -31,7 +31,7 @@ class Array:
         return self.size
 
     # Return element at position
-    def getItem(self, index):
+    def __getitem__(self, index):
 
         if index > self.size or index < 0:
             raise e.IndexError('Index exceeds the length of the array')
@@ -39,7 +39,7 @@ class Array:
             return self.array[index]
 
     # Setting Item at position
-    def setItem(self, index, value):
+    def __setitem__(self, index, value):
 
         if index > self.size or index < 0:
             raise e.IndexError('Index exceeds the length of the array')
@@ -55,6 +55,14 @@ class Array:
     # Iterate through array
     def __iter__(self):
         return _ArrayIterator(self.array)
+
+
+    '''
+    Extra Note: The magic phrases such as __len__, __getitem__ and __setitem__
+    will be called internally when certain syntax flavours of python are used.
+    Therefore when constructing our data structures, these have to be taken
+    into account for the heavylifting.
+    '''
 
 # Create an iterator function (With Reference to Data Structures and Algorithm Using Python)
 class _ArrayIterator:
@@ -88,7 +96,7 @@ class Array2D:
 
             # Iterate through the values
             for i in range(len(self.Rows)):
-                self.Rows.setItem(i, Array(ncols))
+                self.Rows[i] = Array(ncols)
             self.clear(None)
             self.nrows = nrows
             self.ncols = ncols
@@ -108,23 +116,23 @@ class Array2D:
         
         # Iterate through the columns and give the values
         for i in range(len(self.Rows)):
-            self.Rows.getItem(i).clear(None)
+            self.Rows[i].clear(None)
 
     # Getting item
-    def getItem(self, positionTuple):
+    def __getitem__(self, positionTuple):
         queryRow = positionTuple[0]
         queryCol = positionTuple[1]
         if 0 <= queryRow < self.numRows() and 0 <= queryCol < self.numCols():
-            return self.Rows.getItem(queryRow).getItem(queryCol)
+            return self.Rows[queryRow][queryCol]
         else:
             raise IndexError('Rows and Columns are not within the range or not an integer')
 
     # Setting Item
-    def setItem(self, positionTuple, value):
+    def __setitem__(self, positionTuple, value):
         queryRow = positionTuple[0]
         queryCol = positionTuple[1]
         if 0 <= queryRow < self.numRows() and 0 <= queryCol < self.numCols():
-            self.Rows.getItem(queryRow).setItem(queryCol, value)
+            self.Rows[queryRow][queryCol] = value
         else:
             raise IndexError('Rows and Columns are not within the range or not an integer')
 
@@ -160,12 +168,12 @@ class Matrix:
         return self.ncols
 
     # Getting item
-    def getItem(self, positionTuple):
-        return self.matrix.getItem(positionTuple)
+    def __getitem__(self, positionTuple):
+        return self.matrix[positionTuple]
 
     # Setting Item
-    def setItem(self, positionTuple, value):
-        self.matrix.setItem(positionTuple, value)
+    def __setitem__(self, positionTuple, value):
+        self.matrix[positionTuple] = value
 
     # Scaling By
     def scale(self, scalar):
@@ -173,8 +181,8 @@ class Matrix:
         # Iterate through each element and times the scalar value to it
         for i in range(self.numRows()):
             for j in range(self.numCols()):
-                val = self.getItem((i,j))
-                self.matrix.setItem((i,j), val*scalar)
+                val = self[(i,j)]
+                self[(i,j)] =  val*scalar
 
         return self.matrix
 
@@ -188,8 +196,8 @@ class Matrix:
         # Iterate through original array
         for i in range(self.numRows()):
             for j in range(self.numCols()):
-                val = self.getItem((i,j))
-                transposeArray.setItem((j,i), val)
+                val = self[(i,j)]
+                transposeArray[(j,i)] = val
 
         return transposeArray
 
@@ -199,9 +207,9 @@ class Matrix:
             newMatrix = Matrix(self.numRows(), self.numCols())
             for i in range(self.numRows()):
                 for j in range(self.numCols()):
-                    current_val = self.getItem((i,j))
-                    incoming_val = rhsmatrix.getItem((i,j))
-                    newMatrix.setItem((i,j), current_val + incoming_val)
+                    current_val = self[(i,j)]
+                    incoming_val = rhsmatrix[(i,j)]
+                    newMatrix[(i,j)] = current_val + incoming_val
             return newMatrix
         else:
             raise e.MatrixOperationError('The columns or rows of the given matrix is not the same')
@@ -212,9 +220,9 @@ class Matrix:
             newMatrix = Matrix(self.numRows(), self.numCols())
             for i in range(self.numRows()):
                 for j in range(self.numCols()):
-                    current_val = self.getItem((i,j))
-                    incoming_val = rhsmatrix.getItem((i,j))
-                    newMatrix.setItem((i,j), current_val - incoming_val)
+                    current_val = self[(i,j)]
+                    incoming_val = rhsmatrix[(i,j)]
+                    newMatrix[(i,j)] =  current_val - incoming_val
             return newMatrix
         else:
             raise e.MatrixOperationError('The columns or rows of the given matrix is not the same')
@@ -231,10 +239,10 @@ class Matrix:
                 for j in range(rhsmatrix.numCols()):
                     tmp = 0
                     for k in range(self.numCols()):
-                        current_val = self.getItem((i, k))
-                        incoming_val = rhsmatrix.getItem((k,j))
+                        current_val = self[(i, k)]
+                        incoming_val = rhsmatrix[(k,j)]
                         tmp += current_val * incoming_val
-                    multiplyArray.setItem((i, j), tmp)
+                    multiplyArray[(i, j)] = tmp
             return multiplyArray        
 
         else:

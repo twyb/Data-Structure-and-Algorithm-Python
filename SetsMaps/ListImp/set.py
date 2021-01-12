@@ -1,3 +1,5 @@
+import sys, os
+sys.path.insert(0, os.path.join(sys.path[0],'Utilities'))
 import error_util as e
 
 class Set:
@@ -116,4 +118,3 @@ class _SetIterator:
             return entry
         else:
             raise StopIteration
-
